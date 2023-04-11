@@ -21,16 +21,38 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [parentHash, setParentHash] = useState();
+  const [transactions, setTransactions] = useState([]);
+  
 
   useEffect(() => {
-    async function getBlockNumber() {
-      setBlockNumber(await alchemy.core.getBlockNumber());
+    async function getBlock() {
+      const block = await alchemy.core.getBlock("latest");
+      //setBlockNumber(await alchemy.core.getBlockNumber());
+      setBlockNumber(block.number);
+      setParentHash(block.parentHash);
+      
+      setTransactions(block.transactions);
     }
 
-    getBlockNumber();
+    getBlock();
   });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return (
+    <div className="App">
+      Block Number: {blockNumber}
+      <hr />
+      Parent Hash: {parentHash}
+      
+      <hr />
+      Transactions:
+      {transactions.map((transaction) => 
+        <ul key={transaction}>
+          {transaction}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export default App;
